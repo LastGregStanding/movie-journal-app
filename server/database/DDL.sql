@@ -9,8 +9,8 @@ SET AUTOCOMMIT=0;
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS movies;
-DROP TABLE IF EXISTS user_movies;
-DROP TABLE IF EXISTS journal_entries;
+DROP TABLE IF EXISTS libraries;
+DROP TABLE IF EXISTS reviews;
 
 -- -----------------------------------------------------
 -- Create Table: users
@@ -23,6 +23,44 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- -----------------------------------------------------
+-- Stored Procedure: RegisterUser
+-- -----------------------------------------------------
+
+DROP PROCEDURE IF EXISTS RegisterUser;
+DELIMITER //
+
+CREATE PROCEDURE RegisterUser(
+    IN p_username VARCHAR(50),
+    IN p_email VARCHAR(100),
+    IN p_password_hash VARCHAR(255)
+)
+BEGIN
+    INSERT INTO users (username, email, password_hash)
+    VALUES (p_username, p_email, p_password_hash);
+END //
+
+DELIMITER ; 
+
+-- -----------------------------------------------------
+-- Stored Procedure: GetUserInfo
+-- -----------------------------------------------------
+
+DROP PROCEDURE IF EXISTS GetUserInfo;
+DELIMITER //
+
+CREATE PROCEDURE GetUserInfo (IN p_username VARCHAR(50))
+BEGIN
+    SELECT
+        users.id,
+        users.email,
+        users.password_hash
+    FROM users
+    WHERE users.username = p_username;
+END //
+
+DELIMITER ;
 
 -- -----------------------------------------------------
 -- Create Table: movies
@@ -39,7 +77,7 @@ CREATE TABLE movies (
 -- Create Table: user_movies
 -- -----------------------------------------------------
 
-CREATE TABLE user_movies (
+CREATE TABLE libraries (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
@@ -53,7 +91,7 @@ CREATE TABLE user_movies (
 -- Create Table: journal_entries
 -- -----------------------------------------------------
 
-CREATE TABLE journal_entries (
+CREATE TABLE reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
