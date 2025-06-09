@@ -4,10 +4,12 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const corsOptions = {
   origin: ["http://localhost:3000"],
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
@@ -23,17 +25,20 @@ const __dirname = dirname(__filename);
 // Serve static files
 app.use(express.static(path.join(__dirname, "public")));
 
-import authRoutes from "./routes/authRoutes.mjs";
-// import libraryRoutes from "./routes/libraryRoutes.mjs";
-// import movieRoutes from "./routes/movieRoutes.mjs";
-// import reviewRoutes from "./routes/reviewRoutes.mjs";
-// import userRoutes from "./routes/userRoutes.mjs";
+// Parse cookies sent from client
+app.use(cookieParser());
 
+import authRoutes from "./routes/authRoutes.mjs";
 app.use("/api/auth", authRoutes);
-// app.use("/api/library", libraryRoutes);
-// app.use("/api/movies", movieRoutes);
-// app.use("/api/reviews", reviewRoutes);
-// app.use("/api/users", userRoutes);
+
+import movieRoutes from "./routes/movieRoutes.mjs";
+app.use("/api/movies", movieRoutes);
+
+import libraryRoutes from "./routes/libraryRoutes.mjs";
+app.use("/api/library", libraryRoutes);
+
+import reviewRoutes from "./routes/reviewRoutes.mjs";
+app.use("/api/reviews", reviewRoutes);
 
 // 404 handler
 app.use((req, res) => {
